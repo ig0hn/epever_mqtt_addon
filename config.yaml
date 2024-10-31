@@ -1,3 +1,4 @@
+# config.yaml
 name: "Epever MQTT Monitor"
 version: "1.0"
 slug: "epever_mqtt_addon"
@@ -14,16 +15,15 @@ boot: auto
 services:
   - mqtt:need
 options:
-  mqtt_host: "core-mosquitto"  # Це хост для вбудованого брокера в Home Assistant
+  mqtt_host: "core-mosquitto"
   mqtt_port: 1883
-  mqtt_user: "mqtt_user"        # Ваш користувач MQTT
-  mqtt_password: "Albert140"    # Ваш пароль MQTT
+  mqtt_user: "mqtt_user"
+  mqtt_password: "Albert140"
   mqtt_topic: "home/epever-solar/epever/data"
 schema:
   mqtt_host: str
-  mqtt_port: int
+  mqtt_port: port
   mqtt_user: str
   mqtt_password: str
   mqtt_topic: str
-image: "ghcr.io/ig0hn/epever_mqtt_addon-amd64"
-
+init: false

@@ -11,6 +11,9 @@ logger = logging.getLogger(__name__)
 with open('/data/options.json') as f:
     config = json.load(f)
 
+logger.info(f"Loaded configuration: {json.dumps({k: v for k, v in config.items() if 'password' not in k})}")
+
+
 # MQTT налаштування
 mqtt_host = config.get('mqtt_host', 'core-mosquitto')  # Використовуємо core-mosquitto для вбудованого брокера
 mqtt_port = config.get('mqtt_port', 1883)

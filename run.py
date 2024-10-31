@@ -40,17 +40,22 @@ except Exception as e:
     exit(1)
 
 # Callback для підключення
-def on_connect(client, userdata, flags, rc):
-    if rc == 0:
+def on_connect(client, userdata, flags, reason_code, properties=None):
+    if reason_code == 0:
         logger.info("Connected successfully to MQTT broker")
         client.subscribe(mqtt_topic)
         logger.info(f"Subscribed to topic: {mqtt_topic}")
     else:
-        logger.error(f"Failed to connect to MQTT broker with code: {rc}")
+        logger.error(f"Failed to connect to MQTT broker with code: {reason_code}")
 
 # Callback для отримання повідомлень
 def on_message(client, userdata, msg):
-    logger.info(f"Received message on topic {msg.topic}: {msg.payload.decode()}")
+    try:
+        payload = msg.payload.decode()
+        logger.info(f"Received message on topic {msg.topic}: {payload}")
+        # Тут можна додати обробку даних від EPEVER
+    except Exception as e:
+        logger.error(f"Error processing message: {e}")
 
 # Створення клієнта MQTT
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)

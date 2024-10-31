@@ -1,30 +1,57 @@
-import os
 import paho.mqtt.client as mqtt
+import json
+import logging
+import os
 
-# Отримайте конфігурації з опцій аддона
-mqtt_host = os.getenv("MQTT_HOST")
-mqtt_port = int(os.getenv("MQTT_PORT", 1883))
-mqtt_user = os.getenv("MQTT_USER")
-mqtt_password = os.getenv("MQTT_PASSWORD")
-mqtt_topic = os.getenv("MQTT_TOPIC")
+# Налаштування логування
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# Функція для обробки підключення
+# Отримання налаштувань з options.json
+with open('/data/options.json') as f:
+    config = json.load(f)
+
+# MQTT налаштування
+mqtt_host = config.get('mqtt_host', 'core-mosquitto')  # Використовуємо core-mosquitto для вбудованого брокера
+mqtt_port = config.get('mqtt_port', 1883)
+mqtt_user = config.get('mqtt_user', 'mqtt_user')
+mqtt_password = config.get('mqtt_password', 'Albert140')
+
+# Callback для підключення
 def on_connect(client, userdata, flags, rc):
-    print("Connected to MQTT broker with result code " + str(rc))
-    client.subscribe(mqtt_topic)
+    if rc == 0:
+        logger.info("Connected successfully to MQTT broker.")
+    else:
+        logger.error(f"Connection failed with code {rc}")
 
-# Функція для обробки повідомлень
-def on_message(client, userdata, msg):
-    print(f"Topic: {msg.topic}\nMessage: {msg.payload.decode()}")
+# Створення клієнта MQTT з новим API
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 
-# Налаштування MQTT-клієнта
-client = mqtt.Client()
-client.username_pw_set(mqtt_user, mqtt_password)
+# Встановлення callback'ів
 client.on_connect = on_connect
-client.on_message = on_message
 
-# Підключення до брокера
-client.connect(mqtt_host, mqtt_port, 60)
+# Налаштування авторизації
+client.username_pw_set(mqtt_user, mqtt_password)
 
-# Запуск клієнта
-client.loop_forever()
+# Підключення до MQTT брокера
+try:
+    logger.info(f"Attempting to connect to MQTT broker at {mqtt_host}:{mqtt_port}")
+    client.connect(mqtt_host, mqtt_port, 60)
+except ValueError as e:
+    logger.error(f"Invalid MQTT host configuration: {e}")
+    exit(1)
+except Exception as e:
+    logger.error(f"Failed to connect to MQTT broker: {e}")
+    exit(1)
+
+client.loop_start()
+
+# Основний цикл програми
+try:
+    while True:
+        pass  # Місце для вашої основної логіки аддона
+except KeyboardInterrupt:
+    logger.info("Shutting down")
+finally:
+    client.loop_stop()
+    client.disconnect()

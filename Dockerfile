@@ -12,3 +12,4 @@ COPY run.py /run.py
 
 # Вкажіть команду для запуску скрипта
 CMD ["python3", "/run.py"]
+# Added comment

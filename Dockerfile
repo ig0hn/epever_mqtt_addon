@@ -13,3 +13,7 @@ COPY run.py /run.py
 # Вкажіть команду для запуску скрипта
 CMD ["python3", "/run.py"]
 # Added comment
+LABEL \
+  io.hass.version="1.0" \
+  io.hass.type="addon" \
+  io.hass.arch="armhf|armv7|aarch64|amd64|i386"

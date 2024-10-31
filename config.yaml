@@ -1,13 +1,15 @@
 name: EPEVER MQTT Monitor
-version: 1.0
+version: "1.0"
 slug: epever_mqtt_addon
 description: "Моніторинг даних EPEVER через MQTT"
+url: "https://github.com/ig0hn/epever_mqtt_addon"
 arch:
   - armhf
   - armv7
   - aarch64
   - amd64
   - i386
+init: false
 startup: application
 boot: auto
 options:
@@ -22,3 +24,5 @@ schema:
   mqtt_user: str
   mqtt_password: str
   mqtt_topic: str
+image: "ghcr.io/ig0hn/epever_mqtt_addon-{arch}"
+

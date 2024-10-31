@@ -25,4 +25,5 @@ schema:
   mqtt_user: str
   mqtt_password: str
   mqtt_topic: str
-image: "ghcr.io/ig0hn/epever_mqtt_addon-{arch}"
+image: "ghcr.io/ig0hn/epever_mqtt_addon-amd64"
+

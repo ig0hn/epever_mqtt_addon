@@ -1,0 +1,24 @@
+name: EPEVER MQTT Monitor
+version: 1.0
+slug: epever_mqtt_addon
+description: "Моніторинг даних EPEVER через MQTT"
+arch:
+  - armhf
+  - armv7
+  - aarch64
+  - amd64
+  - i386
+startup: application
+boot: auto
+options:
+  mqtt_host: "192.168.0.95"
+  mqtt_port: 1883
+  mqtt_user: "mqtt_user"
+  mqtt_password: "Albert140"
+  mqtt_topic: "home/epever-solar/epever/data"
+schema:
+  mqtt_host: str
+  mqtt_port: int
+  mqtt_user: str
+  mqtt_password: str
+  mqtt_topic: str

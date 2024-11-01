@@ -40,7 +40,7 @@ except Exception as e:
     exit(1)
 
 # Callback для підключення
-def on_connect(client, userdata, flags, rc):
+def on_connect(client, userdata, flags, rc, properties=None):
     logger.debug(f"Connect flags: {flags}")
     if rc == 0:
         logger.info("Connected successfully to MQTT broker")
@@ -51,21 +51,21 @@ def on_connect(client, userdata, flags, rc):
         logger.error(f"Failed to connect to MQTT broker with code: {rc}")
 
 # Callback для отримання повідомлень
-def on_message(client, userdata, msg):
+def on_message(client, userdata, message):
     try:
-        payload = msg.payload.decode()
-        logger.info(f"Received message on topic {msg.topic}: {payload}")
+        payload = message.payload.decode()
+        logger.info(f"Received message on topic {message.topic}: {payload}")
         # Тут можна додати обробку даних від EPEVER
     except Exception as e:
         logger.error(f"Error processing message: {e}")
 
-def on_disconnect(client, userdata, rc):
+def on_disconnect(client, userdata, rc, properties=None):
     logger.info(f"Disconnected with result code: {rc}")
     if rc != 0:
         logger.error("Unexpected disconnection. Attempting to reconnect...")
 
 # Створення клієнта MQTT
-client = mqtt.Client(protocol=mqtt.MQTTv311)  # Явно вказуємо версію протоколу
+client = mqtt.Client(client_id="epever_client", protocol=mqtt.MQTTv5)  # Використовуємо MQTT v5
 
 # Встановлення callback'ів
 client.on_connect = on_connect
@@ -83,6 +83,7 @@ try:
     client.connect(mqtt_host, mqtt_port, 60)
 except Exception as e:
     logger.error(f"Failed to connect to MQTT broker: {e}")
+    logger.exception(e)  # Виведе повний stacktrace
     exit(1)
 
 # Запуск головного циклу
@@ -92,6 +93,6 @@ except KeyboardInterrupt:
     logger.info("Shutting down")
 except Exception as e:
     logger.error(f"Unexpected error: {e}")
-    logger.exception(e)  # Виведе повний stacktrace
+    logger.exception(e)
 finally:
     client.disconnect()

@@ -13,11 +13,18 @@ logger = logging.getLogger(__name__)
 
 def clear_logs():
     try:
-        # Очищаємо лог файл аддона
-        log_path = '/data/epever_mqtt_addon.log'
-        with open(log_path, 'w') as f:
-            f.write('')
-        logger.info("Logs cleared successfully")
+        # Очищаємо всі можливі місця зберігання логів
+        log_paths = [
+            '/data/epever_mqtt_addon.log',
+            '/config/home-assistant.log',
+            '/config/supervisor/logs/epever_mqtt_addon.log'
+        ]
+        for log_path in log_paths:
+            try:
+                open(log_path, 'w').close()
+                logger.info(f"Cleared log file: {log_path}")
+            except Exception as e:
+                logger.warning(f"Could not clear log file {log_path}: {e}")
     except Exception as e:
         logger.error(f"Failed to clear logs: {e}")
 

@@ -15,15 +15,19 @@ boot: auto
 services:
   - mqtt:need
 options:
-  mqtt_host: "core-mosquitto"  # Повертаємо назад
+  mqtt_host: "core-mosquitto"
   mqtt_port: 1883
   mqtt_user: "mqtt_user"
   mqtt_password: "Albert140"
   mqtt_topic: "home/epever-solar/epever/data"
+  epever_host: "192.168.0.188"
+  epever_port: 502
 schema:
   mqtt_host: str
   mqtt_port: port
   mqtt_user: str
   mqtt_password: str
   mqtt_topic: str
+  epever_host: str
+  epever_port: port
 init: false

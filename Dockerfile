@@ -21,3 +21,7 @@ LABEL \
     io.hass.version="1.0" \
     io.hass.type="addon" \
     io.hass.arch="armhf|armv7|aarch64|amd64|i386"
+    
+RUN mkdir -p /config/supervisor/logs
+RUN touch /config/supervisor/logs/epever_mqtt_addon.log
+RUN truncate -s 0 /config/supervisor/logs/epever_mqtt_addon.log

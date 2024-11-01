@@ -15,7 +15,7 @@ boot: auto
 services:
   - mqtt:need
 options:
-  mqtt_host: "core-mosquitto"
+  mqtt_host: "192.168.0.95"  # Змінюємо з core-mosquitto на IP адресу
   mqtt_port: 1883
   mqtt_user: "mqtt_user"
   mqtt_password: "Albert140"

@@ -19,7 +19,7 @@ try:
         config = json.load(f)
     
     # Логування завантаженої конфігурації (без паролю)
-    safe_config = {k: v for k, v in config.items() if 'password' not in k}
+    safe_config = {k: v for k, v in config.items() if 'password' not in k.lower()}
     logger.info(f"Loaded configuration: {json.dumps(safe_config)}")
     
     # MQTT налаштування
@@ -40,13 +40,15 @@ except Exception as e:
     exit(1)
 
 # Callback для підключення
-def on_connect(client, userdata, flags, reason_code, properties=None):
-    if reason_code == 0:
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
         logger.info("Connected successfully to MQTT broker")
         client.subscribe(mqtt_topic)
         logger.info(f"Subscribed to topic: {mqtt_topic}")
+        # Надсилаємо тестове повідомлення для перевірки
+        client.publish(mqtt_topic, "Connected and ready")
     else:
-        logger.error(f"Failed to connect to MQTT broker with code: {reason_code}")
+        logger.error(f"Failed to connect to MQTT broker with code: {rc}")
 
 # Callback для отримання повідомлень
 def on_message(client, userdata, msg):
@@ -57,16 +59,23 @@ def on_message(client, userdata, msg):
     except Exception as e:
         logger.error(f"Error processing message: {e}")
 
+def on_disconnect(client, userdata, rc):
+    logger.info(f"Disconnected with result code: {rc}")
+    if rc != 0:
+        logger.error("Unexpected disconnection. Attempting to reconnect...")
+
 # Створення клієнта MQTT
-client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+client = mqtt.Client(protocol=mqtt.MQTTv311)  # Явно вказуємо версію протоколу
 
 # Встановлення callback'ів
 client.on_connect = on_connect
 client.on_message = on_message
+client.on_disconnect = on_disconnect
 
 # Налаштування авторизації
 if mqtt_user and mqtt_password:
     client.username_pw_set(mqtt_user, mqtt_password)
+    logger.info("Set up authentication credentials")
 
 # Підключення до MQTT брокера
 try:
@@ -83,5 +92,6 @@ except KeyboardInterrupt:
     logger.info("Shutting down")
 except Exception as e:
     logger.error(f"Unexpected error: {e}")
+    logger.exception(e)  # Виведе повний stacktrace
 finally:
     client.disconnect()

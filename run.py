@@ -4,7 +4,7 @@ import logging
 import os
 
 # Налаштування логування
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # Перевірка наявності файлу конфігурації
@@ -41,11 +41,11 @@ except Exception as e:
 
 # Callback для підключення
 def on_connect(client, userdata, flags, rc):
+    logger.debug(f"Connect flags: {flags}")
     if rc == 0:
         logger.info("Connected successfully to MQTT broker")
         client.subscribe(mqtt_topic)
         logger.info(f"Subscribed to topic: {mqtt_topic}")
-        # Надсилаємо тестове повідомлення для перевірки
         client.publish(mqtt_topic, "Connected and ready")
     else:
         logger.error(f"Failed to connect to MQTT broker with code: {rc}")
